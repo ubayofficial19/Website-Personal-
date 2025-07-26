@@ -1,709 +1,900 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Baystore - Premium Apps Marketplace</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-<script>
-tailwind.config = {
-theme: {
-extend: {
-colors: {
-primary: '#5D5CDE',
-'primary-dark': '#4B49C4'
-}
-}
-}
-}
-</script>
-<style>
-.gradient-bg {
-background: linear-gradient(135deg, #5D5CDE 0%, #4B49C4 100%);
-}
-.card-hover {
-transition: all 0.3s ease;
-}
-.card-hover:hover {
-transform: translateY(-8px);
-box-shadow: 0 20px 40px rgba(93, 92, 222, 0.15);
-}
-.modal {
-display: none;
-}
-.modal.active {
-display: flex;
-}
-.cart-badge {
-animation: bounce 0.5s ease-in-out;
-}
-@keyframes bounce {
-0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-40% { transform: translateY(-10px); }
-60% { transform: translateY(-5px); }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate Content Generator - Script Creator Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.6.1/html-docx.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        'primary-dark': '#4C4BBF',
+                        'primary-light': '#7B7AE8',
+                        secondary: '#FF6B6B',
+                        accent: '#4ECDC4',
+                        success: '#51CF66',
+                        warning: '#FFD93D',
+                        danger: '#FF6B6B'
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'bounce-in': 'bounceIn 0.5s ease-out',
+                        'pulse-soft': 'pulseSoft 2s infinite'
+                    }
+                }
+            }
+        }
+
+        tailwind.config.theme.extend.keyframes = {
+            slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' }
+            },
+            fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' }
+            },
+            bounceIn: {
+                '0%': { transform: 'scale(0.8)', opacity: '0' },
+                '50%': { transform: 'scale(1.05)', opacity: '0.8' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
+            },
+            pulseSoft: {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0.7' }
+            }
+        }
+    </script>
 </head>
-<body class="bg-white dark:bg-gray-900 transition-colors duration-300">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
+    <!-- Dark mode detection -->
+    <script>
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
 
-<!-- Navigation -->
-<nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-40">
-<div class="container mx-auto px-4">
-<div class="flex justify-between items-center py-4">
-<div class="flex items-center space-x-3">
-<div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center">
-<span class="text-white font-bold text-xl">B</span>
-</div>
-<h1 class="text-2xl font-bold text-gray-800 dark:text-white">Baystore</h1>
-</div>
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-primary to-primary-dark text-white shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                        <span class="text-2xl">🚀</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Affiliate Content Generator</h1>
+                        <p class="text-primary-light text-sm">Script Creator Pro - Generate konten affiliate berkualitas tinggi</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="text-right">
+                        <div class="text-sm opacity-90">Total Generated</div>
+                        <div class="text-xl font-bold" id="total-generated">0</div>
+                    </div>
+                    <div class="w-px h-8 bg-white/30"></div>
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all">
+                        <span id="theme-icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
 
-<div class="hidden md:flex items-center space-x-6">
-<a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Beranda</a>
-<a href="#apps" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Aplikasi</a>
-<a href="#about" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Tentang</a>
-<a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Kontak</a>
-</div>
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Input & Settings Panel -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sticky top-8">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+                        <span class="mr-3">⚙️</span>
+                        Pengaturan Generator
+                    </h2>
 
-<div class="flex items-center space-x-4">
-<!-- Search -->
-<div class="relative hidden sm:block">
-<input type="text" id="searchInput" placeholder="Cari aplikasi..."
-class="w-64 px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
-<i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
-</div>
+                    <form id="content-generator-form" class="space-y-6">
+                        <!-- Product Link -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                🔗 Link Produk Affiliate
+                            </label>
+                            <div class="relative">
+                                <input type="url" id="product-link" required 
+                                       placeholder="https://shopee.co.id/product/..." 
+                                       class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                                <button type="button" onclick="analyzeProduct()" class="absolute right-2 top-2 px-3 py-1 bg-primary text-white rounded-lg text-sm hover:bg-primary-dark transition-all">
+                                    Analisa
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Support: Shopee, Tokopedia, Amazon, dll.
+                            </p>
+                        </div>
 
-<!-- Cart -->
-<button id="cartBtn" class="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
-<i class="fas fa-shopping-cart text-xl"></i>
-<span id="cartBadge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
-</button>
+                        <!-- Product Info Display -->
+                        <div id="product-info" class="hidden bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4">
+                            <h4 class="font-semibold text-gray-800 dark:text-white mb-2">📦 Info Produk</h4>
+                            <div id="product-details" class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                <!-- Will be populated by analyzeProduct() -->
+                            </div>
+                        </div>
 
-<!-- Mobile menu button -->
-<button id="mobileMenuBtn" class="md:hidden p-2 text-gray-600 dark:text-gray-300">
-<i class="fas fa-bars text-xl"></i>
-</button>
-</div>
-</div>
+                        <!-- Content Settings -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    📊 Jumlah Konten Generate
+                                </label>
+                                <select id="content-count" class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary">
+                                    <option value="1">1 Konten</option>
+                                    <option value="3" selected>3 Konten</option>
+                                    <option value="5">5 Konten</option>
+                                    <option value="10">10 Konten</option>
+                                </select>
+                            </div>
 
-<!-- Mobile menu -->
-<div id="mobileMenu" class="md:hidden hidden pb-4">
-<div class="flex flex-col space-y-2">
-<a href="#home" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Beranda</a>
-<a href="#apps" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Aplikasi</a>
-<a href="#about" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Tentang</a>
-<a href="#contact" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Kontak</a>
-<input type="text" placeholder="Cari aplikasi..."
-class="mt-2 px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
-</div>
-</div>
-</div>
-</nav>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    🎨 Style Bahasa
+                                </label>
+                                <select id="language-style" class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary">
+                                    <option value="casual">😊 Casual & Friendly</option>
+                                    <option value="professional">💼 Profesional</option>
+                                    <option value="persuasive" selected>🎯 Persuasif</option>
+                                    <option value="emotional">❤️ Emosional</option>
+                                    <option value="trendy">🔥 Trendy & Gaul</option>
+                                    <option value="storytelling">📖 Storytelling</option>
+                                </select>
+                            </div>
 
-<!-- Hero Section -->
-<section id="home" class="gradient-bg py-20">
-<div class="container mx-auto px-4 text-center">
-<h2 class="text-5xl md:text-6xl font-bold text-white mb-6">
-Premium Apps<br>Marketplace
-</h2>
-<p class="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
-Temukan aplikasi premium terbaik untuk kebutuhan bisnis dan personal Anda. Kualitas terjamin, harga terjangkau.
-</p>
-<button onclick="scrollToApps()" class="bg-white text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors">
-Jelajahi Aplikasi
-</button>
-</div>
-</section>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    📏 Panjang Tulisan
+                                </label>
+                                <select id="content-length" class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary">
+                                    <option value="short">📝 Pendek (50-100 kata)</option>
+                                    <option value="medium" selected>📄 Sedang (100-200 kata)</option>
+                                    <option value="long">📃 Panjang (200-300 kata)</option>
+                                    <option value="very-long">📚 Sangat Panjang (300+ kata)</option>
+                                </select>
+                            </div>
 
-<!-- Filter Section -->
-<section class="py-8 bg-gray-50 dark:bg-gray-800">
-<div class="container mx-auto px-4">
-<div class="flex flex-wrap gap-4 justify-center">
-<button onclick="filterApps('all')" class="filter-btn active bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors">
-Semua
-</button>
-<button onclick="filterApps('productivity')" class="filter-btn bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-Produktivitas
-</button>
-<button onclick="filterApps('design')" class="filter-btn bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-Design
-</button>
-<button onclick="filterApps('business')" class="filter-btn bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-Bisnis
-</button>
-<button onclick="filterApps('gaming')" class="filter-btn bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-Gaming
-</button>
-</div>
-</div>
-</section>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    🎭 Tipe Konten
+                                </label>
+                                <select id="content-type" class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary">
+                                    <option value="review" selected>⭐ Review Produk</option>
+                                    <option value="unboxing">📦 Unboxing</option>
+                                    <option value="comparison">⚖️ Perbandingan</option>
+                                    <option value="tutorial">🎓 Tutorial/Tips</option>
+                                    <option value="lifestyle">🌟 Lifestyle</option>
+                                    <option value="promo">🔥 Promosi/Sale</option>
+                                </select>
+                            </div>
 
-<!-- Apps Section -->
-<section id="apps" class="py-16 bg-white dark:bg-gray-900">
-<div class="container mx-auto px-4">
-<h3 class="text-4xl font-bold text-center text-gray-800 dark:text-white mb-12">Aplikasi Premium</h3>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    🎯 Target Audience
+                                </label>
+                                <select id="target-audience" class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary">
+                                    <option value="general" selected>🌐 Umum</option>
+                                    <option value="women">👩 Wanita</option>
+                                    <option value="men">👨 Pria</option>
+                                    <option value="teens">👧 Remaja</option>
+                                    <option value="parents">👨‍👩‍👧‍👦 Orang Tua</option>
+                                    <option value="professionals">💼 Profesional</option>
+                                </select>
+                            </div>
+                        </div>
 
-<div id="appsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-<!-- Apps will be rendered here by JavaScript -->
-</div>
-</div>
-</section>
+                        <!-- Additional Keywords -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                🏷️ Keyword Tambahan (Opsional)
+                            </label>
+                            <input type="text" id="additional-keywords" 
+                                   placeholder="viral, trending, best seller, dll." 
+                                   class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Pisahkan dengan koma (,)
+                            </p>
+                        </div>
 
-<!-- About Section -->
-<section id="about" class="py-16 bg-gray-50 dark:bg-gray-800">
-<div class="container mx-auto px-4">
-<div class="max-w-4xl mx-auto text-center">
-<h3 class="text-4xl font-bold text-gray-800 dark:text-white mb-8">Tentang Baystore</h3>
-<p class="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-Baystore adalah marketplace terpercaya untuk aplikasi premium berkualitas tinggi. Kami menyediakan berbagai aplikasi yang telah diverifikasi dan dijamin keamanannya untuk membantu produktivitas dan kreativitas Anda.
-</p>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-<div class="text-center">
-<div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
-<i class="fas fa-shield-alt text-white text-2xl"></i>
-</div>
-<h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Aman & Terpercaya</h4>
-<p class="text-gray-600 dark:text-gray-300">Semua aplikasi telah diverifikasi dan bebas malware</p>
-</div>
-<div class="text-center">
-<div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
-<i class="fas fa-crown text-white text-2xl"></i>
-</div>
-<h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Kualitas Premium</h4>
-<p class="text-gray-600 dark:text-gray-300">Hanya aplikasi berkualitas tinggi yang tersedia</p>
-</div>
-<div class="text-center">
-<div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
-<i class="fas fa-headset text-white text-2xl"></i>
-</div>
-<h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Support 24/7</h4>
-<p class="text-gray-600 dark:text-gray-300">Tim support siap membantu Anda kapan saja</p>
-</div>
-</div>
-</div>
-</div>
-</section>
+                        <!-- Generate Button -->
+                        <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-4 px-6 rounded-xl hover:from-primary-dark hover:to-primary transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg">
+                            <span id="generate-btn-text">🚀 Generate Konten Affiliate</span>
+                            <div id="generate-loading" class="hidden flex items-center justify-center">
+                                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                Generating...
+                            </div>
+                        </button>
+                    </form>
 
-<!-- Contact Section -->
-<section id="contact" class="py-16 bg-white dark:bg-gray-900">
-<div class="container mx-auto px-4">
-<div class="max-w-2xl mx-auto text-center">
-<h3 class="text-4xl font-bold text-gray-800 dark:text-white mb-8">Hubungi Kami</h3>
-<p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
-Ada pertanyaan atau butuh bantuan? Tim kami siap membantu Anda.
-</p>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-<div class="text-center">
-<i class="fas fa-envelope text-primary text-3xl mb-4"></i>
-<h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Email</h4>
-<p class="text-gray-600 dark:text-gray-300">support@baystore.com</p>
-</div>
-<div class="text-center">
-<i class="fas fa-phone text-primary text-3xl mb-4"></i>
-<h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Telepon</h4>
-<p class="text-gray-600 dark:text-gray-300">+62 812-3456-7890</p>
-</div>
-</div>
-</div>
-</div>
-</section>
+                    <!-- Quick Actions -->
+                    <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">⚡ Quick Actions</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="clearAllResults()" class="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
+                                🗑️ Clear All
+                            </button>
+                            <button onclick="exportAllToWord()" class="px-3 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition-all">
+                                📄 Export Word
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<!-- Footer -->
-<footer class="gradient-bg py-12">
-<div class="container mx-auto px-4 text-center">
-<div class="flex items-center justify-center space-x-3 mb-6">
-<div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-<span class="text-primary font-bold text-xl">B</span>
-</div>
-<h4 class="text-2xl font-bold text-white">Baystore</h4>
-</div>
-<p class="text-purple-100 mb-6">Premium Apps Marketplace - Kualitas Terjamin</p>
-<div class="flex justify-center space-x-6 mb-6">
-<a href="#" class="text-purple-100 hover:text-white transition-colors">
-<i class="fab fa-facebook text-2xl"></i>
-</a>
-<a href="#" class="text-purple-100 hover:text-white transition-colors">
-<i class="fab fa-twitter text-2xl"></i>
-</a>
-<a href="#" class="text-purple-100 hover:text-white transition-colors">
-<i class="fab fa-instagram text-2xl"></i>
-</a>
-<a href="#" class="text-purple-100 hover:text-white transition-colors">
-<i class="fab fa-linkedin text-2xl"></i>
-</a>
-</div>
-<p class="text-purple-200 text-sm">&copy; 2024 Baystore. All rights reserved.</p>
-</div>
-</footer>
+            <!-- Results Panel -->
+            <div class="lg:col-span-2">
+                <!-- Stats Bar -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-8">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-primary" id="stat-generated">0</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Generated</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-secondary" id="stat-copied">0</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Copied</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-accent" id="stat-words">0</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Words</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-success" id="stat-exports">0</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Exports</div>
+                        </div>
+                    </div>
+                </div>
 
-<!-- App Detail Modal -->
-<div id="appModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
-<div class="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-<div class="p-6">
-<div class="flex justify-between items-start mb-6">
-<h3 id="modalTitle" class="text-2xl font-bold text-gray-800 dark:text-white"></h3>
-<button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-<i class="fas fa-times text-2xl"></i>
-</button>
-</div>
+                <!-- Results Container -->
+                <div id="results-container">
+                    <!-- Welcome Screen -->
+                    <div id="welcome-screen" class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 text-center">
+                        <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="text-4xl">🎯</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+                            Welcome to Affiliate Content Generator!
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+                            Masukkan link produk affiliate Anda dan atur pengaturan di panel kiri untuk mulai generate konten berkualitas tinggi secara otomatis.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
+                            <div class="bg-primary/10 rounded-xl p-4">
+                                <div class="text-2xl mb-2">⚡</div>
+                                <div class="text-sm font-semibold text-gray-800 dark:text-white">Fast Generation</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">Generate multiple content variations quickly</div>
+                            </div>
+                            <div class="bg-secondary/10 rounded-xl p-4">
+                                <div class="text-2xl mb-2">🎨</div>
+                                <div class="text-sm font-semibold text-gray-800 dark:text-white">Multiple Styles</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">Choose from various writing styles</div>
+                            </div>
+                        </div>
+                    </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div>
-<img id="modalImage" src="" alt="" class="w-full h-64 object-cover rounded-lg">
-</div>
-<div>
-<div class="mb-4">
-<span id="modalCategory" class="inline-block bg-primary text-white px-3 py-1 rounded-full text-sm font-medium"></span>
-</div>
-<p id="modalDescription" class="text-gray-600 dark:text-gray-300 mb-6"></p>
-<div class="flex items-center justify-between mb-6">
-<span id="modalPrice" class="text-3xl font-bold text-primary"></span>
-<div class="flex items-center">
-<div class="flex text-yellow-400 mr-2">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<span class="text-gray-600 dark:text-gray-300 text-sm">(4.8)</span>
-</div>
-</div>
-<button onclick="addToCartFromModal()" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-<i class="fas fa-shopping-cart mr-2"></i>
-Tambah ke Keranjang
-</button>
-</div>
-</div>
+                    <!-- Generated Content Will Appear Here -->
+                    <div id="generated-content" class="space-y-6 hidden">
+                        <!-- Content cards will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="mt-8">
-<h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Fitur Utama</h4>
-<ul id="modalFeatures" class="space-y-2">
-<!-- Features will be populated by JavaScript -->
-</ul>
-</div>
-</div>
-</div>
-</div>
+    <!-- Custom Confirm Dialog -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">⚠️</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2" id="confirm-title">Konfirmasi</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-6" id="confirm-message">Apakah Anda yakin?</p>
+                <div class="flex space-x-3">
+                    <button onclick="closeConfirmModal()" class="flex-1 px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all">
+                        Batal
+                    </button>
+                    <button onclick="confirmAction()" class="flex-1 px-4 py-2 bg-primary text-white hover:bg-primary-dark rounded-lg transition-all">
+                        Ya, Lanjutkan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- Cart Modal -->
-<div id="cartModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
-<div class="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-<div class="p-6">
-<div class="flex justify-between items-center mb-6">
-<h3 class="text-2xl font-bold text-gray-800 dark:text-white">Keranjang Belanja</h3>
-<button onclick="closeCartModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-<i class="fas fa-times text-2xl"></i>
-</button>
-</div>
+    <!-- Success Toast -->
+    <div id="success-toast" class="fixed top-4 right-4 bg-success text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <div class="flex items-center">
+            <span class="mr-2">✅</span>
+            <span id="toast-message">Action completed successfully!</span>
+        </div>
+    </div>
 
-<div id="cartItems" class="space-y-4 mb-6">
-<!-- Cart items will be populated by JavaScript -->
-</div>
+    <script>
+        // Global variables
+        let generatedCount = 0;
+        let copiedCount = 0;
+        let totalWords = 0;
+        let exportCount = 0;
+        let generatedContents = [];
+        let confirmCallback = null;
 
-<div class="border-t border-gray-200 dark:border-gray-600 pt-6">
-<div class="flex justify-between items-center mb-4">
-<span class="text-xl font-semibold text-gray-800 dark:text-white">Total:</span>
-<span id="cartTotal" class="text-2xl font-bold text-primary">Rp 0</span>
-</div>
-<button onclick="checkout()" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-<i class="fas fa-credit-card mr-2"></i>
-Checkout
-</button>
-</div>
-</div>
-</div>
-</div>
+        // Initialize Poe API handlers
+        function initializePoeHandlers() {
+            if (typeof window.Poe !== 'undefined') {
+                window.Poe.registerHandler('content-generator', (result, context) => {
+                    handleContentGeneration(result, context);
+                });
+            }
+        }
 
-<script>
-// Dark mode setup
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-document.documentElement.classList.add('dark');
-}
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-if (event.matches) {
-document.documentElement.classList.add('dark');
-} else {
-document.documentElement.classList.remove('dark');
-}
-});
+        // Product analysis simulation
+        function analyzeProduct() {
+            const link = document.getElementById('product-link').value;
+            if (!link) {
+                showToast('Masukkan link produk terlebih dahulu!', 'error');
+                return;
+            }
 
-// Sample apps data
-const apps = [
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Analyzing...';
+            btn.disabled = true;
+
+            // Simulate product analysis
+            setTimeout(() => {
+                const productInfo = extractProductInfo(link);
+                displayProductInfo(productInfo);
+                btn.textContent = originalText;
+                btn.disabled = false;
+                showToast('Produk berhasil dianalisa!');
+            }, 2000);
+        }
+
+        function extractProductInfo(link) {
+            // Mock product information extraction
+            const domains = {
+                'shopee.co.id': { platform: 'Shopee', icon: '🛍️' },
+                'tokopedia.com': { platform: 'Tokopedia', icon: '🏪' },
+                'amazon.com': { platform: 'Amazon', icon: '📦' },
+                'lazada.co.id': { platform: 'Lazada', icon: '🛒' }
+            };
+
+            let platform = { platform: 'Unknown', icon: '🔗' };
+            for (const [domain, info] of Object.entries(domains)) {
+                if (link.includes(domain)) {
+                    platform = info;
+                    break;
+                }
+            }
+
+            // Mock extracted data
+            return {
+                platform: platform.platform,
+                icon: platform.icon,
+                title: 'Smart Watch Fitness Tracker Premium',
+                price: 'Rp 299.000',
+                rating: '4.8/5',
+                category: 'Electronics',
+                brand: 'TechBrand',
+                features: ['Heart Rate Monitor', 'Waterproof', 'Long Battery Life']
+            };
+        }
+
+        function displayProductInfo(info) {
+            const container = document.getElementById('product-details');
+            container.innerHTML = `
+                <div class="flex items-center mb-2">
+                    <span class="mr-2">${info.icon}</span>
+                    <strong>${info.platform}</strong>
+                </div>
+                <div><strong>Produk:</strong> ${info.title}</div>
+                <div><strong>Harga:</strong> ${info.price}</div>
+                <div><strong>Rating:</strong> ⭐ ${info.rating}</div>
+                <div><strong>Kategori:</strong> ${info.category}</div>
+                <div><strong>Brand:</strong> ${info.brand}</div>
+                <div><strong>Fitur:</strong> ${info.features.join(', ')}</div>
+            `;
+            document.getElementById('product-info').classList.remove('hidden');
+        }
+
+        // Content generation
+        document.getElementById('content-generator-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                productLink: document.getElementById('product-link').value,
+                contentCount: parseInt(document.getElementById('content-count').value),
+                languageStyle: document.getElementById('language-style').value,
+                contentLength: document.getElementById('content-length').value,
+                contentType: document.getElementById('content-type').value,
+                targetAudience: document.getElementById('target-audience').value,
+                additionalKeywords: document.getElementById('additional-keywords').value
+            };
+
+            if (!formData.productLink) {
+                showToast('Link produk harus diisi!', 'error');
+                return;
+            }
+
+            startGenerating();
+            
+            try {
+                await generateContent(formData);
+            } catch (error) {
+                console.error('Generation error:', error);
+                showToast('Terjadi kesalahan saat generate konten!', 'error');
+                stopGenerating();
+            }
+        });
+
+        async function generateContent(formData) {
+            // Hide welcome screen and show results
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('generated-content').classList.remove('hidden');
+
+            // Create prompt for AI
+            const prompt = createPrompt(formData);
+            
+            // Use Poe API if available, otherwise simulate
+            if (typeof window.Poe !== 'undefined') {
+                try {
+                    await window.Poe.sendUserMessage(prompt, {
+                        handler: 'content-generator',
+                        stream: true,
+                        openChat: false,
+                        handlerContext: { formData }
+                    });
+                } catch (error) {
+                    console.error('Poe API error:', error);
+                    // Fallback to simulation
+                    simulateContentGeneration(formData);
+                }
+            } else {
+                // Simulate content generation
+                simulateContentGeneration(formData);
+            }
+        }
+
+        function createPrompt(formData) {
+            const styleDescriptions = {
+                casual: 'santai dan friendly',
+                professional: 'profesional dan formal',
+                persuasive: 'persuasif dan meyakinkan',
+                emotional: 'emosional dan menyentuh hati',
+                trendy: 'trendy dan gaul',
+                storytelling: 'bercerita dan engaging'
+            };
+
+            const lengthDescriptions = {
+                short: '50-100 kata',
+                medium: '100-200 kata',
+                long: '200-300 kata',
+                'very-long': '300+ kata'
+            };
+
+            const typeDescriptions = {
+                review: 'review produk yang menarik',
+                unboxing: 'konten unboxing yang engaging',
+                comparison: 'perbandingan produk',
+                tutorial: 'tutorial atau tips penggunaan',
+                lifestyle: 'konten lifestyle',
+                promo: 'konten promosi atau sale'
+            };
+
+            return `@Claude-Sonnet-4 Buatkan ${formData.contentCount} variasi konten affiliate untuk produk di link: ${formData.productLink}
+
+Spesifikasi konten:
+- Style: ${styleDescriptions[formData.languageStyle]}
+- Panjang: ${lengthDescriptions[formData.contentLength]}
+- Tipe: ${typeDescriptions[formData.contentType]}
+- Target: ${formData.targetAudience}
+${formData.additionalKeywords ? `- Keywords: ${formData.additionalKeywords}` : ''}
+
+Buat konten dalam bahasa Indonesia yang menarik untuk affiliate marketing. Setiap konten harus unik dan engaging. Format output dalam JSON seperti ini:
+
 {
-id: 1,
-name: "Premium Photo Editor Pro",
-category: "design",
-price: 299000,
-image: "https://pfst.cf2.poecdn.net/base/image/3489456433acd36e255a67dc96b4fe0a468092feb8bd0d8161eaf2855312474c?w=2340&h=4160",
-description: "Editor foto profesional dengan fitur AI terdepan untuk hasil editing yang memukau.",
-features: ["AI-powered editing", "RAW file support", "Cloud sync", "Professional filters", "Batch processing"]
-},
-{
-id: 2,
-name: "Business Analytics Suite",
-category: "business",
-price: 599000,
-image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjNUQ1Q0RFIi8+CjxwYXRoIGQ9Ik03NSAxNTBMMTEyLjUgMTEyLjVMMTUwIDEzNy41TDE4Ny41IDEwMEwyMjUgMTI1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNNzUgMjAwSDIyNSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxMjAiIHk9IjE4MCI+CjxyZWN0IHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4yIiByeD0iMTAiLz4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzFfMSkiPgo8cGF0aCBkPSJNMzAgMTVMMzUgMjVIMjVMMzAgMTVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTUgMzBMMjUgMzVMMjUgMjVMMTUgMzBaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNNDUgMzBMMzUgMjVMMzUgMzVMNDUgMzBaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzFfMSI+CjxyZWN0IHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0id2hpdGUiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4KPC9zdmc+",
-description: "Suite analitik bisnis lengkap dengan dashboard real-time dan laporan mendalam.",
-features: ["Real-time dashboard", "Advanced analytics", "Custom reports", "Data visualization", "API integration"]
-},
-{
-id: 3,
-name: "Productivity Master",
-category: "productivity",
-price: 199000,
-image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMDBBNjUyIi8+CjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIHJ4PSIyMCIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4xIi8+CjxyZWN0IHg9IjgwIiB5PSI4MCIgd2lkdGg9IjE0MCIgaGVpZ2h0PSIyMCIgcng9IjEwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI4MCIgeT0iMTIwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjIwIiByeD0iMTAiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuNyIvPgo8cmVjdCB4PSI4MCIgeT0iMTYwIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjIwIiByeD0iMTAiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuNyIvPgo8Y2lyY2xlIGN4PSI2NSIgY3k9IjkwIiByPSI4IiBmaWxsPSIjMDBBNjUyIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz4KPHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI1NSIgeT0iODAiPgo8cGF0aCBkPSJNMTUgNkw4IDEzTDUgMTAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo8L3N2Zz4=",
-description: "Aplikasi produktivitas all-in-one untuk manajemen tugas, jadwal, dan catatan.",
-features: ["Task management", "Calendar integration", "Note taking", "Time tracking", "Team collaboration"]
-},
-{
-id: 4,
-name: "Gaming Engine Pro",
-category: "gaming",
-price: 799000,
-image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRkY2QzQ0Ii8+CjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE1MCIgcj0iMTAwIiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjEiLz4KPGNpcmNsZSBjeD0iMTUwIiBjeT0iMTUwIiByPSI2MCIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4yIi8+CjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE1MCIgcj0iMjAiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjEwMCIgeT0iMjAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjIwIiByeD0iMTAiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4=",
-description: "Engine game profesional dengan rendering 3D canggih dan tools pengembangan lengkap.",
-features: ["3D rendering", "Physics engine", "Audio system", "Scripting support", "Asset management"]
-},
-{
-id: 5,
-name: "Design Studio Ultimate",
-category: "design",
-price: 449000,
-image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRTA1Qzk2Ii8+CjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIHJ4PSIyMCIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4xNSIvPgo8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjMwIiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjMiLz4KPHJlY3QgeD0iMTUwIiB5PSI4MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjQwIiByeD0iMjAiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuNSIvPgo8cGF0aCBkPSJNNzAgMTgwTDEzMCAxNDBMMTkwIDE2MEwyMzAgMTgwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4=",
-description: "Studio desain lengkap untuk grafis, UI/UX, dan branding profesional.",
-features: ["Vector graphics", "UI/UX tools", "Brand kit", "Typography tools", "Collaboration"]
-},
-{
-id: 6,
-name: "Finance Tracker Pro",
-category: "business",
-price: 249000,
-image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzlBNkEzIi8+CjxjaXJjbGUgY3g9IjE1MCIgY3k9IjEyMCIgcj0iNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIvPgo8cGF0aCBkPSJNMTUwIDcwVjEyMEwxODAgMTUwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cmVjdCB4PSI1MCIgeT0iMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4zIi8+CjxyZWN0IHg9IjUwIiB5PSIyMjAiIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjUiLz4KPHJlY3QgeD0iNTAiIHk9IjI0MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuNCIvPgo8L3N2Zz4=",
-description: "Aplikasi pelacakan keuangan dengan analisis mendalam dan perencanaan budget.",
-features: ["Expense tracking", "Budget planning", "Investment tracking", "Reports", "Bank sync"]
-},
-{
-id: 7,
-name: "Code Editor Elite",
-category: "productivity",
-price: 349000,
-image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMzE0MzU1Ii8+CjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNSIgZmlsbD0iIzIyMzMzRCIvPgo8cmVjdCB4PSI3MCIgeT0iODAiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiM2M0I3QTciLz4KPHJlY3QgeD0iNzAiIHk9IjEwMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iI0Y3RkFFQSIvPgo8cmVjdCB4PSI3MCIgeT0iMTIwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iI0Y3RkFFQSIvPgo8cmVjdCB4PSI3MCIgeT0iMTQwIiB3aWR0aD0iNDAiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjRjc5RTFCIi8+CjxyZWN0IHg9IjcwIiB5PSIxNjAiIHdpZHRoPSIxMjAiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjRjdGQUVBIi8+CjwvdmVnPg==",
-description: "Editor kode canggih dengan AI assistant dan debugging tools terintegrasi.",
-features: ["AI code completion", "Integrated debugger", "Git integration", "Plugin system", "Live collaboration"]
-},
-{
-id: 8,
-name: "3D Modeling Master",
-category: "design",
-price: 699000,
-image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjN0M3Nzk2Ii8+CjxwYXRoIGQ9Ik0xNTAgNTBMMjIwIDEwMEwyMjAgMjAwTDE1MCAyNTBMODAgMjAwTDgwIDEwMEwxNTAgNTBaIiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjEiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIvPgo8cGF0aCBkPSJNMTUwIDUwTDE1MCAyNTAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWRhc2hhcnJheT0iMTAgNSIvPgo8cGF0aCBkPSJNODAgMTAwTDIyMCAyMDAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWRhc2hhcnJheT0iMTAgNSIvPgo8cGF0aCBkPSJNMjIwIDEwMEw4MCAyMDAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWRhc2hhcnJheT0iMTAgNSIvPgo8L3N2Zz4=",
-description: "Software 3D modeling profesional dengan rendering real-time dan animasi.",
-features: ["3D sculpting", "Real-time rendering", "Animation tools", "Material editor", "Export options"]
-}
-];
-
-let cart = [];
-let currentFilter = 'all';
-let selectedApp = null;
-
-// Initialize the app
-document.addEventListener('DOMContentLoaded', function() {
-renderApps();
-setupEventListeners();
-});
-
-function setupEventListeners() {
-// Mobile menu toggle
-document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-const menu = document.getElementById('mobileMenu');
-menu.classList.toggle('hidden');
-});
-
-// Cart button
-document.getElementById('cartBtn').addEventListener('click', function() {
-showCartModal();
-});
-
-// Search functionality
-document.getElementById('searchInput').addEventListener('input', function(e) {
-searchApps(e.target.value);
-});
-
-// Close modals when clicking outside
-document.addEventListener('click', function(e) {
-if (e.target.classList.contains('modal')) {
-closeModal();
-closeCartModal();
-}
-});
+  "contents": [
+    {
+      "title": "Judul menarik",
+      "content": "Isi konten lengkap...",
+      "hashtags": ["#hashtag1", "#hashtag2"],
+      "callToAction": "Call to action yang menarik"
+    }
+  ]
 }
 
-function renderApps(filteredApps = apps) {
-const grid = document.getElementById('appsGrid');
-grid.innerHTML = '';
+Provide ONLY raw JSON in your response with no explanations, additional text, or code block formatting.`;
+        }
 
-filteredApps.forEach(app => {
-const appCard = createAppCard(app);
-grid.appendChild(appCard);
-});
-}
+        function handleContentGeneration(result, context) {
+            if (result.status === 'complete') {
+                try {
+                    const response = result.responses[0].content;
+                    const data = JSON.parse(response);
+                    displayGeneratedContent(data.contents, context.formData);
+                    stopGenerating();
+                } catch (error) {
+                    console.error('JSON parse error:', error);
+                    // Fallback to simulation
+                    simulateContentGeneration(context.formData);
+                }
+            } else if (result.status === 'error') {
+                showToast('Error generating content with AI', 'error');
+                simulateContentGeneration(context.formData);
+            }
+        }
 
-function createAppCard(app) {
-const card = document.createElement('div');
-card.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-lg card-hover cursor-pointer';
-card.onclick = () => showAppModal(app);
+        function simulateContentGeneration(formData) {
+            // Simulate API delay
+            setTimeout(() => {
+                const mockContents = generateMockContent(formData);
+                displayGeneratedContent(mockContents, formData);
+                stopGenerating();
+            }, 3000);
+        }
 
-card.innerHTML = `
-<div class="relative">
-<img src="${app.image}" alt="${app.name}" class="w-full h-48 object-cover rounded-t-xl">
-<div class="absolute top-4 left-4">
-<span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium capitalize">
-${getCategoryName(app.category)}
-</span>
-</div>
-</div>
-<div class="p-6">
-<h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">${app.name}</h4>
-<p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">${app.description}</p>
-<div class="flex items-center justify-between">
-<span class="text-2xl font-bold text-primary">Rp ${app.price.toLocaleString('id-ID')}</span>
-<button onclick="event.stopPropagation(); addToCart(${app.id})"
-class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
-<i class="fas fa-cart-plus"></i>
-</button>
-</div>
-<div class="flex items-center mt-3">
-<div class="flex text-yellow-400 mr-2">
-${'<i class="fas fa-star"></i>'.repeat(5)}
-</div>
-<span class="text-gray-600 dark:text-gray-300 text-sm">(4.8)</span>
-</div>
-</div>
-`;
+        function generateMockContent(formData) {
+            const contents = [];
+            
+            const templates = {
+                review: [
+                    {
+                        title: "Review Jujur: Produk ini Benar-Benar Worth It!",
+                        content: "Guys, aku baru aja cobain produk ini dan honestly, mind = blown! 🤯 Awalnya skeptis juga sih, tapi setelah pakai beberapa hari, beneran recommended banget. Kualitasnya premium tapi harganya masih affordable. Perfect banget buat yang lagi cari produk berkualitas dengan budget pas-pasan. Trust me, you won't regret it!",
+                        hashtags: ["#review", "#recommended", "#worthit", "#qualityproduct"],
+                        callToAction: "Grab yours now sebelum kehabisan! Link di bio 👆"
+                    }
+                ],
+                unboxing: [
+                    {
+                        title: "Unboxing: First Impression yang Bikin WOW!",
+                        content: "Unboxing time! 📦✨ Packaging-nya udah bikin excited dari awal. Premium banget dan sustainable juga! Isinya? Lebih dari ekspektasi! Detail dan finishing-nya top notch. Dari segi build quality, bener-bener feel expensive meskipun harganya affordable. Ini dia kenapa produk ini jadi bestseller!",
+                        hashtags: ["#unboxing", "#firstimpression", "#premium", "#bestseller"],
+                        callToAction: "Penasaran? Check link di bio untuk dapetin yang sama! 🔥"
+                    }
+                ]
+            };
 
-return card;
-}
+            // Generate content based on count
+            for (let i = 0; i < formData.contentCount; i++) {
+                const template = templates[formData.contentType] || templates.review;
+                const content = template[0]; // For simplicity, using first template
+                
+                contents.push({
+                    title: `${content.title} (Variasi ${i + 1})`,
+                    content: content.content,
+                    hashtags: content.hashtags,
+                    callToAction: content.callToAction
+                });
+            }
 
-function getCategoryName(category) {
-const names = {
-'productivity': 'Produktivitas',
-'design': 'Design',
-'business': 'Bisnis',
-'gaming': 'Gaming'
-};
-return names[category] || category;
-}
+            return contents;
+        }
 
-function filterApps(category) {
-currentFilter = category;
+        function displayGeneratedContent(contents, formData) {
+            const container = document.getElementById('generated-content');
+            
+            contents.forEach((content, index) => {
+                const contentCard = createContentCard(content, index, formData);
+                container.appendChild(contentCard);
+                
+                // Add to global storage
+                generatedContents.push(content);
+                
+                // Animate in
+                setTimeout(() => {
+                    contentCard.classList.add('animate-slide-up');
+                }, index * 200);
+            });
 
-// Update filter buttons
-document.querySelectorAll('.filter-btn').forEach(btn => {
-btn.classList.remove('active', 'bg-primary', 'text-white');
-btn.classList.add('bg-white', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-});
+            // Update stats
+            generatedCount += contents.length;
+            totalWords += contents.reduce((sum, content) => sum + content.content.split(' ').length, 0);
+            updateStats();
+            
+            showToast(`${contents.length} konten berhasil di-generate!`);
+        }
 
-event.target.classList.add('active', 'bg-primary', 'text-white');
-event.target.classList.remove('bg-white', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+        function createContentCard(content, index, formData) {
+            const card = document.createElement('div');
+            card.className = 'bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 opacity-0 transform translate-y-4 transition-all duration-500';
+            
+            const wordCount = content.content.split(' ').length;
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800 dark:text-white">${content.title}</h3>
+                            <div class="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+                                <span>📊 ${wordCount} kata</span>
+                                <span>🎨 ${formData.languageStyle}</span>
+                                <span>🎯 ${formData.contentType}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="copyContent(${generatedContents.length})" class="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-all" title="Copy Content">
+                            📋
+                        </button>
+                        <button onclick="editContent(${generatedContents.length})" class="p-2 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary/20 transition-all" title="Edit Content">
+                            ✏️
+                        </button>
+                        <button onclick="exportSingleToWord(${generatedContents.length})" class="p-2 bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-all" title="Export to Word">
+                            📄
+                        </button>
+                    </div>
+                </div>
 
-// Filter and render apps
-const filteredApps = category === 'all' ? apps : apps.filter(app => app.category === category);
-renderApps(filteredApps);
-}
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-4">
+                    <div class="text-gray-800 dark:text-white whitespace-pre-wrap" id="content-text-${generatedContents.length}">${content.content}</div>
+                </div>
 
-function searchApps(query) {
-const filteredApps = apps.filter(app => {
-const matchesSearch = app.name.toLowerCase().includes(query.toLowerCase()) ||
-app.description.toLowerCase().includes(query.toLowerCase());
-const matchesCategory = currentFilter === 'all' || app.category === currentFilter;
-return matchesSearch && matchesCategory;
-});
-renderApps(filteredApps);
-}
+                ${content.hashtags && content.hashtags.length > 0 ? `
+                <div class="mb-4">
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">Hashtags:</div>
+                    <div class="flex flex-wrap gap-2">
+                        ${content.hashtags.map(tag => `<span class="px-2 py-1 bg-primary/10 text-primary rounded-full text-sm">${tag}</span>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
 
-function showAppModal(app) {
-selectedApp = app;
-document.getElementById('modalTitle').textContent = app.name;
-document.getElementById('modalImage').src = app.image;
-document.getElementById('modalCategory').textContent = getCategoryName(app.category);
-document.getElementById('modalDescription').textContent = app.description;
-document.getElementById('modalPrice').textContent = `Rp ${app.price.toLocaleString('id-ID')}`;
+                ${content.callToAction ? `
+                <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-4">
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Call to Action:</div>
+                    <div class="font-medium text-gray-800 dark:text-white">${content.callToAction}</div>
+                </div>
+                ` : ''}
+            `;
 
-const featuresList = document.getElementById('modalFeatures');
-featuresList.innerHTML = '';
-app.features.forEach(feature => {
-const li = document.createElement('li');
-li.className = 'flex items-center text-gray-600 dark:text-gray-300';
-li.innerHTML = `<i class="fas fa-check text-green-500 mr-3"></i>${feature}`;
-featuresList.appendChild(li);
-});
+            return card;
+        }
 
-document.getElementById('appModal').classList.add('active');
-}
+        function startGenerating() {
+            document.getElementById('generate-btn-text').classList.add('hidden');
+            document.getElementById('generate-loading').classList.remove('hidden');
+            document.querySelector('button[type="submit"]').disabled = true;
+        }
 
-function closeModal() {
-document.getElementById('appModal').classList.remove('active');
-selectedApp = null;
-}
+        function stopGenerating() {
+            document.getElementById('generate-btn-text').classList.remove('hidden');
+            document.getElementById('generate-loading').classList.add('hidden');
+            document.querySelector('button[type="submit"]').disabled = false;
+        }
 
-function addToCart(appId) {
-const app = apps.find(a => a.id === appId);
-if (app) {
-const existingItem = cart.find(item => item.id === appId);
-if (existingItem) {
-existingItem.quantity += 1;
-} else {
-cart.push({ ...app, quantity: 1 });
-}
-updateCartBadge();
-showNotification('Aplikasi berhasil ditambahkan ke keranjang!');
-}
-}
+        // Copy functionality
+        function copyContent(index) {
+            const content = generatedContents[index];
+            if (!content) return;
 
-function addToCartFromModal() {
-if (selectedApp) {
-addToCart(selectedApp.id);
-closeModal();
-}
-}
+            const fullText = `${content.title}\n\n${content.content}\n\n${content.hashtags ? content.hashtags.join(' ') : ''}\n\n${content.callToAction || ''}`;
+            
+            navigator.clipboard.writeText(fullText).then(() => {
+                copiedCount++;
+                updateStats();
+                showToast('Konten berhasil disalin ke clipboard!');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                showToast('Gagal menyalin konten!', 'error');
+            });
+        }
 
-function updateCartBadge() {
-const badge = document.getElementById('cartBadge');
-const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-badge.textContent = totalItems;
-badge.classList.add('cart-badge');
-setTimeout(() => badge.classList.remove('cart-badge'), 500);
-}
+        // Edit functionality
+        function editContent(index) {
+            showToast('Fitur edit akan segera hadir!', 'info');
+        }
 
-function showCartModal() {
-renderCartItems();
-document.getElementById('cartModal').classList.add('active');
-}
+        // Export functionality
+        function exportSingleToWord(index) {
+            const content = generatedContents[index];
+            if (!content) return;
 
-function closeCartModal() {
-document.getElementById('cartModal').classList.remove('active');
-}
+            const htmlContent = `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; margin: 20px;">
+                    <h1 style="color: #5D5CDE; border-bottom: 2px solid #5D5CDE; padding-bottom: 10px;">${content.title}</h1>
+                    <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #5D5CDE;">
+                        ${content.content.replace(/\n/g, '<br>')}
+                    </div>
+                    ${content.hashtags ? `
+                    <div style="margin: 20px 0;">
+                        <strong>Hashtags:</strong><br>
+                        ${content.hashtags.join(' ')}
+                    </div>
+                    ` : ''}
+                    ${content.callToAction ? `
+                    <div style="margin: 20px 0; padding: 15px; background-color: #e8f4fd; border: 1px solid #5D5CDE; border-radius: 5px;">
+                        <strong>Call to Action:</strong><br>
+                        ${content.callToAction}
+                    </div>
+                    ` : ''}
+                    <div style="margin-top: 30px; text-align: center; color: #666; font-size: 12px;">
+                        Generated by Affiliate Content Generator
+                    </div>
+                </div>
+            `;
 
-function renderCartItems() {
-const container = document.getElementById('cartItems');
-const totalElement = document.getElementById('cartTotal');
+            const converted = htmlDocx.asBlob(htmlContent);
+            saveAs(converted, `affiliate-content-${index + 1}.docx`);
+            
+            exportCount++;
+            updateStats();
+            showToast('Konten berhasil di-export ke Word!');
+        }
 
-if (cart.length === 0) {
-container.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 py-8">Keranjang Anda kosong</p>';
-totalElement.textContent = 'Rp 0';
-return;
-}
+        function exportAllToWord() {
+            if (generatedContents.length === 0) {
+                showToast('Belum ada konten yang di-generate!', 'error');
+                return;
+            }
 
-container.innerHTML = '';
-let total = 0;
+            let allContent = `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; margin: 20px;">
+                    <h1 style="color: #5D5CDE; text-align: center; border-bottom: 3px solid #5D5CDE; padding-bottom: 15px;">
+                        Affiliate Content Collection
+                    </h1>
+                    <div style="text-align: center; margin: 20px 0; color: #666;">
+                        Generated: ${new Date().toLocaleDateString('id-ID')}<br>
+                        Total Contents: ${generatedContents.length}
+                    </div>
+            `;
 
-cart.forEach(item => {
-const itemTotal = item.price * item.quantity;
-total += itemTotal;
+            generatedContents.forEach((content, index) => {
+                allContent += `
+                    <div style="page-break-before: ${index > 0 ? 'always' : 'auto'}; margin: 30px 0;">
+                        <h2 style="color: #5D5CDE; border-bottom: 2px solid #5D5CDE; padding-bottom: 10px;">
+                            ${index + 1}. ${content.title}
+                        </h2>
+                        <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #5D5CDE;">
+                            ${content.content.replace(/\n/g, '<br>')}
+                        </div>
+                        ${content.hashtags ? `
+                        <div style="margin: 15px 0;">
+                            <strong>Hashtags:</strong><br>
+                            <span style="color: #5D5CDE;">${content.hashtags.join(' ')}</span>
+                        </div>
+                        ` : ''}
+                        ${content.callToAction ? `
+                        <div style="margin: 15px 0; padding: 15px; background-color: #e8f4fd; border: 1px solid #5D5CDE; border-radius: 5px;">
+                            <strong>Call to Action:</strong><br>
+                            ${content.callToAction}
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
 
-const cartItem = document.createElement('div');
-cartItem.className = 'flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg';
-cartItem.innerHTML = `
-<img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg">
-<div class="flex-1">
-<h5 class="font-semibold text-gray-800 dark:text-white">${item.name}</h5>
-<p class="text-gray-600 dark:text-gray-300">Rp ${item.price.toLocaleString('id-ID')}</p>
-</div>
-<div class="flex items-center space-x-2">
-<button onclick="updateCartItemQuantity(${item.id}, -1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500">
-<i class="fas fa-minus text-sm"></i>
-</button>
-<span class="text-gray-800 dark:text-white font-medium w-8 text-center">${item.quantity}</span>
-<button onclick="updateCartItemQuantity(${item.id}, 1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500">
-<i class="fas fa-plus text-sm"></i>
-</button>
-</div>
-<button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 p-2">
-<i class="fas fa-trash"></i>
-</button>
-`;
-container.appendChild(cartItem);
-});
+            allContent += `
+                    <div style="margin-top: 50px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #ddd; padding-top: 20px;">
+                        Generated by Affiliate Content Generator<br>
+                        Total Words: ${totalWords} | Export Date: ${new Date().toLocaleString('id-ID')}
+                    </div>
+                </div>
+            `;
 
-totalElement.textContent = `Rp ${total.toLocaleString('id-ID')}`;
-}
+            const converted = htmlDocx.asBlob(allContent);
+            saveAs(converted, `affiliate-content-collection-${new Date().toISOString().split('T')[0]}.docx`);
+            
+            exportCount++;
+            updateStats();
+            showToast(`${generatedContents.length} konten berhasil di-export ke Word!`);
+        }
 
-function updateCartItemQuantity(itemId, change) {
-const item = cart.find(item => item.id === itemId);
-if (item) {
-item.quantity += change;
-if (item.quantity <= 0) {
-removeFromCart(itemId);
-return;
-}
-updateCartBadge();
-renderCartItems();
-}
-}
+        // Clear functionality
+        function clearAllResults() {
+            if (generatedContents.length === 0) {
+                showToast('Tidak ada konten untuk dihapus!', 'error');
+                return;
+            }
 
-function removeFromCart(itemId) {
-cart = cart.filter(item => item.id !== itemId);
-updateCartBadge();
-renderCartItems();
-}
+            showConfirmDialog(
+                'Hapus Semua Konten',
+                `Apakah Anda yakin ingin menghapus ${generatedContents.length} konten yang telah di-generate?`,
+                () => {
+                    document.getElementById('generated-content').innerHTML = '';
+                    document.getElementById('generated-content').classList.add('hidden');
+                    document.getElementById('welcome-screen').classList.remove('hidden');
+                    
+                    generatedContents = [];
+                    generatedCount = 0;
+                    totalWords = 0;
+                    updateStats();
+                    
+                    showToast('Semua konten berhasil dihapus!');
+                }
+            );
+        }
 
-function checkout() {
-if (cart.length === 0) {
-showNotification('Keranjang Anda kosong!');
-return;
-}
+        // Stats update
+        function updateStats() {
+            document.getElementById('total-generated').textContent = generatedCount;
+            document.getElementById('stat-generated').textContent = generatedCount;
+            document.getElementById('stat-copied').textContent = copiedCount;
+            document.getElementById('stat-words').textContent = totalWords;
+            document.getElementById('stat-exports').textContent = exportCount;
+        }
 
-const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-showConfirmDialog(
-`Konfirmasi pembelian dengan total Rp ${total.toLocaleString('id-ID')}?`,
-() => {
-// Simulate checkout process
-showNotification('Pembelian berhasil! Terima kasih telah berbelanja di Baystore.');
-cart = [];
-updateCartBadge();
-closeCartModal();
-}
-);
-}
+        // Utility functions
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('success-toast');
+            const messageEl = document.getElementById('toast-message');
+            
+            messageEl.textContent = message;
+            
+            // Set colors based on type
+            if (type === 'error') {
+                toast.className = toast.className.replace('bg-success', 'bg-danger');
+            } else if (type === 'info') {
+                toast.className = toast.className.replace('bg-success bg-danger', 'bg-primary');
+            } else {
+                toast.className = toast.className.replace('bg-danger bg-primary', 'bg-success');
+            }
+            
+            // Show toast
+            toast.classList.remove('translate-x-full');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
 
-function showNotification(message) {
-const notification = document.createElement('div');
-notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
-notification.textContent = message;
-document.body.appendChild(notification);
+        function showConfirmDialog(title, message, callback) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
 
-setTimeout(() => {
-notification.classList.remove('translate-x-full');
-}, 100);
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            confirmCallback = null;
+        }
 
-setTimeout(() => {
-notification.classList.add('translate-x-full');
-setTimeout(() => {
-document.body.removeChild(notification);
-}, 300);
-}, 3000);
-}
+        function confirmAction() {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            closeConfirmModal();
+        }
 
-function showConfirmDialog(message, onConfirm) {
-const modal = document.createElement('div');
-modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-modal.innerHTML = `
-<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
-<p class="text-gray-700 dark:text-gray-300 mb-4">${message}</p>
-<div class="flex justify-end space-x-3">
-<button onclick="this.closest('.fixed').remove()" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">Batal</button>
-<button onclick="this.closest('.fixed').remove(); (${onConfirm})()" class="px-4 py-2 bg-primary text-white hover:bg-primary-dark rounded">Konfirmasi</button>
-</div>
-</div>
-`;
-document.body.appendChild(modal);
-}
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const icon = document.getElementById('theme-icon');
+            icon.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+        }
 
-function scrollToApps() {
-document.getElementById('apps').scrollIntoView({ behavior: 'smooth' });
-}
-</script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePoeHandlers();
+            updateStats();
+            
+            // Set theme icon based on current mode
+            const icon = document.getElementById('theme-icon');
+            icon.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+        });
+    </script>
 </body>
 </html>
